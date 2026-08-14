@@ -1,0 +1,13 @@
+{
+  "name": "task11-entity-module",
+  "version": "1.0.0",
+  "description": "Express and Mongoose CRUD module for Doctor entity",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0"
+  }
+}

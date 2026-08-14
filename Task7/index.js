@@ -1,0 +1,16 @@
+const addGrade = require("./modules/add.grade");
+const readGrades = require("./modules/read.grades");
+const updateGrade = require("./modules/update.grade");
+const deleteGrade = require("./modules/delete.grade");
+console.log("=== SESSION 7 TASK: STUDENT GRADES MANAGER ===");
+addGrade("Esraa", "JavaScript", 95);
+addGrade("Ali", "Node.js", 88);
+addGrade("Sara", "Database", 90);
+console.log("\n--- Current Student Grades ---");
+console.log(readGrades());
+updateGrade(2, 92); 
+console.log("\n--- Grades After Update ---");
+console.log(readGrades());
+deleteGrade(3); 
+console.log("\n--- Final Grades List ---");
+console.log(readGrades());

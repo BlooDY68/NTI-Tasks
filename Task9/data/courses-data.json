@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "title": "JavaScript Fundamentals",
+    "instructor": "Esraa",
+    "price": 150
+  },
+  {
+    "id": 2,
+    "title": "Node.js & Express API",
+    "instructor": "Esraa",
+    "price": 200
+  }
+]

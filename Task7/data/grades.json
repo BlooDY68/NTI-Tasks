@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Esraa",
+    "subject": "JavaScript",
+    "grade": 95
+  },
+  {
+    "id": 2,
+    "name": "Ali",
+    "subject": "Node.js",
+    "grade": 92
+  },
+  {
+    "id": 4,
+    "name": "Ali",
+    "subject": "Node.js",
+    "grade": 88
+  },
+  {
+    "id": 5,
+    "name": "Sara",
+    "subject": "Database",
+    "grade": 90
+  }
+]
