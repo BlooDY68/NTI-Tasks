@@ -1,0 +1,30 @@
+{
+  "name": "ecu-ecommerce-system",
+  "version": "1.0.0",
+  "description": "ECU Summer 2026 Final Project - E-Commerce Management System (Strict Sessions 1-12 Curriculum)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "multer",
+    "ecu"
+  ],
+  "author": "ECU Student",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3"
+  }
+}
