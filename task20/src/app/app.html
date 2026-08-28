@@ -1,0 +1,88 @@
+<main>
+    <header>
+        <p>Team Manager</p>
+        <h1>Build a team that moves together.</h1>
+        <p>Keep track of your people, their roles, and who is ready for the next task.</p>
+    </header>
+
+    <section aria-labelledby="add-member-heading">
+        <h2 id="add-member-heading">Add a team member</h2>
+        <form (ngSubmit)="addMember()">
+            <label>
+                Name
+                <input name="name" [(ngModel)]="newMember.name" placeholder="e.g. Noor Hassan" />
+            </label>
+            <label>
+                Age
+                <input name="age" type="number" [(ngModel)]="newMember.age" min="1" placeholder="24" />
+            </label>
+            <label>
+                Department
+                <select name="department" [(ngModel)]="newMember.department">
+                    @for (department of departments; track department) {
+                        <option [value]="department">{{ department }}</option>
+                    }
+                </select>
+            </label>
+            <label>
+                <input name="available" type="checkbox" [(ngModel)]="newMember.available" />
+                Available for work
+            </label>
+            <button type="submit">Add member</button>
+        </form>
+    </section>
+
+    <section aria-labelledby="team-heading">
+        <div>
+            <h2 id="team-heading">Our team</h2>
+            <label>
+                Filter by department
+                <select [(ngModel)]="selectedDepartment">
+                    <option value="All Departments">All Departments</option>
+                    @for (department of departments; track department) {
+                        <option [value]="department">{{ department }}</option>
+                    }
+                </select>
+            </label>
+            <div role="group" aria-label="Display mode">
+                <button type="button" [attr.aria-pressed]="viewMode === 'cards'" (click)="viewMode = 'cards'">Card View</button>
+                <button type="button" [attr.aria-pressed]="viewMode === 'list'" (click)="viewMode = 'list'">List View</button>
+            </div>
+        </div>
+
+        @if (members.length === 0) {
+            <p>No team members yet. Add your first member above.</p>
+        } @else if (filteredMembers.length === 0) {
+            <p>No members match this department.</p>
+        } @else {
+            @switch (viewMode) {
+                @case ('cards') {
+                    <div>
+                        @for (member of filteredMembers; track member.id) {
+                            <article>
+                                <h3>{{ member.name }}</h3>
+                                <p>{{ member.department }} · Age {{ member.age }}</p>
+                                <p>{{ member.available ? 'Available' : 'Unavailable' }}</p>
+                                <button type="button" (click)="toggleAvailability(member.id)">
+                                    Mark as {{ member.available ? 'unavailable' : 'available' }}
+                                </button>
+                            </article>
+                        }
+                    </div>
+                }
+                @case ('list') {
+                    <ul>
+                        @for (member of filteredMembers; track member.id) {
+                            <li>
+                                <span>{{ member.name }} - {{ member.department }} - {{ member.available ? 'Available' : 'Unavailable' }}</span>
+                                <button type="button" (click)="toggleAvailability(member.id)">
+                                    Toggle availability
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+            }
+        }
+    </section>
+</main>
