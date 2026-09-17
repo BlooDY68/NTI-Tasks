@@ -1,0 +1,86 @@
+<div class="details-page">
+  <div class="breadcrumb">
+    <a routerLink="/products">← Back to Products</a>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-success">
+      ✅ {{ notification() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading product specifications...</p>
+    </div>
+  } @else if (product()) {
+    <div class="product-layout">
+
+      <div class="image-column">
+        <div class="main-image-card">
+          <img
+            [src]="getImageUrl(product()?.image)"
+            [alt]="product()?.name"
+            class="detail-image"
+          />
+        </div>
+      </div>
+
+      <div class="info-column">
+        <div class="brand-badge">{{ product()?.brand }}</div>
+        <h1 class="product-title">{{ product()?.name }}</h1>
+
+        <div class="meta-row">
+          <span class="category-tag">Category: {{ getCategoryName(product()?.category) }}</span>
+          @if ((product()?.stock ?? 0) > 0) {
+            <span class="stock-pill in-stock">In Stock ({{ product()?.stock }} available)</span>
+          } @else {
+            <span class="stock-pill out-of-stock">Sold Out</span>
+          }
+        </div>
+
+        <div class="price-container">
+          <span class="currency-symbol">$</span>
+          <span class="price-value">{{ product()?.price?.toFixed(2) }}</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="description-section">
+          <h3>Product Overview</h3>
+          <p>{{ product()?.description }}</p>
+        </div>
+
+        <div class="divider"></div>
+
+        @if ((product()?.stock ?? 0) > 0) {
+          <div class="purchase-controls">
+            <div class="quantity-selector">
+              <label>Quantity:</label>
+              <div class="qty-btn-group">
+                <button (click)="decrementQuantity()" class="qty-btn" [disabled]="quantity() <= 1">-</button>
+                <span class="qty-display">{{ quantity() }}</span>
+                <button (click)="incrementQuantity()" class="qty-btn" [disabled]="quantity() >= (product()?.stock ?? 1)">+</button>
+              </div>
+            </div>
+
+            <button (click)="addToCart()" class="btn btn-add-cart">
+              🛒 Add to Cart
+            </button>
+          </div>
+        } @else {
+          <div class="out-of-stock-alert">
+            <p>This item is currently out of stock. Please check back later.</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

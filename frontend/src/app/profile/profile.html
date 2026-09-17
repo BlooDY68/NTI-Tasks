@@ -1,0 +1,84 @@
+<div class="profile-page">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="avatar-wrapper">
+        <img
+          [src]="getImageUrl(user()?.profileImage)"
+          [alt]="user()?.name"
+          class="user-avatar"
+        />
+      </div>
+      <h2>{{ user()?.name }}</h2>
+      <span class="user-role-badge" [class.admin-badge]="user()?.role === 'Admin'">
+        {{ user()?.role }}
+      </span>
+      <p class="member-since">Member since {{ user()?.createdAt | date:'mediumDate' }}</p>
+    </div>
+
+    @if (notification()) {
+      <div class="alert alert-success">
+        ✅ {{ notification() }}
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        ⚠️ {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+      <div class="form-group">
+        <label for="email">Email Address (Read-only)</label>
+        <input
+          type="email"
+          id="email"
+          [value]="user()?.email"
+          disabled
+          class="form-control disabled-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          class="form-control"
+          [class.is-invalid]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+        />
+        @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+          <div class="error-feedback">Name is required (minimum 2 characters).</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Change Password (Leave blank to keep current)</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="New password (minimum 6 characters)"
+          class="form-control"
+          [class.is-invalid]="profileForm.get('password')?.invalid && profileForm.get('password')?.touched"
+        />
+        @if (profileForm.get('password')?.invalid && profileForm.get('password')?.touched) {
+          <div class="error-feedback">Password must be at least 6 characters.</div>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-save"
+        [disabled]="profileForm.invalid || isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span>Saving Changes...</span>
+        } @else {
+          <span>Update Profile</span>
+        }
+      </button>
+    </form>
+  </div>
+</div>

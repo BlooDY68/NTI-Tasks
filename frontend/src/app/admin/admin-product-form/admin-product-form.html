@@ -1,0 +1,155 @@
+<div class="form-container">
+  <div class="breadcrumb">
+    <a routerLink="/admin/products">← Back to Product Inventory</a>
+  </div>
+
+  <div class="form-card">
+    <div class="card-header">
+      <h2>{{ isEditMode() ? 'Edit Product Details' : 'Add New Inventory Product' }}</h2>
+      <p>Configure product attributes, pricing, category classification, and upload imagery</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        ⚠️ {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="admin-form">
+      <div class="form-group">
+        <label for="name">Product Name *</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="e.g. Ultra HD Noise-Cancelling Headphones"
+          class="form-control"
+          [class.is-invalid]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
+        />
+        @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+          <div class="error-feedback">Product name is required.</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">Detailed Description *</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="4"
+          placeholder="Provide complete technical features and product overview..."
+          class="form-control"
+          [class.is-invalid]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+        ></textarea>
+        @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+          <div class="error-feedback">Description is required (minimum 5 characters).</div>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="price">Unit Price ($) *</label>
+          <input
+            type="number"
+            id="price"
+            formControlName="price"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            class="form-control"
+            [class.is-invalid]="productForm.get('price')?.invalid && productForm.get('price')?.touched"
+          />
+          @if (productForm.get('price')?.invalid && productForm.get('price')?.touched) {
+            <div class="error-feedback">Valid positive price is required.</div>
+          }
+        </div>
+
+        <div class="form-group flex-1">
+          <label for="stock">Available Stock Quantity *</label>
+          <input
+            type="number"
+            id="stock"
+            formControlName="stock"
+            min="0"
+            placeholder="0"
+            class="form-control"
+            [class.is-invalid]="productForm.get('stock')?.invalid && productForm.get('stock')?.touched"
+          />
+          @if (productForm.get('stock')?.invalid && productForm.get('stock')?.touched) {
+            <div class="error-feedback">Stock quantity must be non-negative.</div>
+          }
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label for="brand">Brand / Manufacturer *</label>
+          <input
+            type="text"
+            id="brand"
+            formControlName="brand"
+            placeholder="e.g. Sony, Apple, Samsung"
+            class="form-control"
+            [class.is-invalid]="productForm.get('brand')?.invalid && productForm.get('brand')?.touched"
+          />
+          @if (productForm.get('brand')?.invalid && productForm.get('brand')?.touched) {
+            <div class="error-feedback">Brand name is required.</div>
+          }
+        </div>
+
+        <div class="form-group flex-1">
+          <label for="category">Category Classification *</label>
+          <select
+            id="category"
+            formControlName="category"
+            class="form-control"
+            [class.is-invalid]="productForm.get('category')?.invalid && productForm.get('category')?.touched"
+          >
+            <option value="">Select a Category</option>
+            @for (cat of categories(); track cat._id) {
+              <option [value]="cat._id">{{ cat.name }}</option>
+            }
+          </select>
+          @if (productForm.get('category')?.invalid && productForm.get('category')?.touched) {
+            <div class="error-feedback">Please select a category.</div>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Product Image (Multer DiskStorage)</label>
+        <input
+          type="file"
+          id="image"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept="image/*"
+          class="form-control file-input"
+        />
+        <small class="help-text">Select JPEG, PNG, or WEBP image file to upload.</small>
+
+        @if (isEditMode() && currentProduct()?.image) {
+          <div class="current-image-preview">
+            <span>Current Image:</span>
+            <img [src]="getImageUrl(currentProduct()?.image)" alt="Current image" class="preview-thumb" />
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/admin/products" class="btn btn-secondary">Cancel</a>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span>Saving Product...</span>
+          } @else {
+            <span>{{ isEditMode() ? 'Save Changes' : 'Create Product' }}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

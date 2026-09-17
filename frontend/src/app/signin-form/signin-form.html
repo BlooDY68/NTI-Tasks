@@ -1,0 +1,78 @@
+<div class="auth-card-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Welcome Back</h2>
+      <p>Log in to access your account</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        ⚠️ {{ errorMessage() }}
+      </div>
+    }
+
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          ngModel
+          #emailRef="ngModel"
+          required
+          email
+          placeholder="e.g. user@example.com"
+          class="form-control"
+          [class.is-invalid]="emailRef.invalid && (emailRef.dirty || emailRef.touched)"
+        />
+        @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
+          <div class="error-feedback">
+            @if (emailRef.errors?.['required']) {
+              <span>Email is required.</span>
+            }
+            @if (emailRef.errors?.['email']) {
+              <span>Please enter a valid email address.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          ngModel
+          #passwordRef="ngModel"
+          required
+          placeholder="Enter your password"
+          class="form-control"
+          [class.is-invalid]="passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)"
+        />
+        @if (passwordRef.invalid && (passwordRef.dirty || passwordRef.touched)) {
+          <div class="error-feedback">
+            <span>Password is required.</span>
+          </div>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-submit"
+        [disabled]="loginForm.invalid || isLoading()"
+      >
+        @if (isLoading()) {
+          <span>Logging in...</span>
+        } @else {
+          <span>Sign In</span>
+        }
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don't have an account yet? <a routerLink="/signup">Sign up here</a></p>
+    </div>
+  </div>
+</div>

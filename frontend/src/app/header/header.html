@@ -1,0 +1,59 @@
+<header class="main-header">
+  <div class="header-container">
+    <a routerLink="/products" class="brand-logo">
+      <span class="logo-icon">🛍️</span>
+      <span class="logo-text">NovaMart</span>
+    </a>
+
+    <nav class="navigation">
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/products" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: false }">Products</a>
+        </li>
+
+        @if (authService.isLoggedInSignal()) {
+          @if (authService.getRole() === 'Customer') {
+            <li>
+              <a routerLink="/cart" routerLinkActive="active-link" class="cart-link">
+                Cart
+                @if (cartService.cartCountSignal() > 0) {
+                  <span class="badge">{{ cartService.cartCountSignal() }}</span>
+                }
+              </a>
+            </li>
+            <li>
+              <a routerLink="/my-orders" routerLinkActive="active-link">My Orders</a>
+            </li>
+          }
+
+          @if (authService.getRole() === 'Admin') {
+            <li>
+              <a routerLink="/admin" routerLinkActive="active-link" class="admin-nav-link">Admin Panel</a>
+            </li>
+          }
+
+          <li>
+            <a routerLink="/profile" routerLinkActive="active-link">Profile</a>
+          </li>
+        }
+      </ul>
+
+      <div class="auth-section">
+        @if (authService.isLoggedInSignal()) {
+          <div class="user-greeting">
+            <span class="user-role-badge" [class.admin-badge]="authService.getRole() === 'Admin'">
+              {{ authService.getRole() }}
+            </span>
+            <span class="user-name">{{ authService.currentUserSignal()?.name }}</span>
+          </div>
+          <button (click)="logout()" class="btn btn-outline-danger">Log Out</button>
+        } @else {
+          <div class="guest-buttons">
+            <a routerLink="/signin" class="btn btn-outline-primary">Sign In</a>
+            <a routerLink="/signup" class="btn btn-primary">Sign Up</a>
+          </div>
+        }
+      </div>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,115 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>Product Category Management</h1>
+      <p>Organize store merchandise into distinct browsable categories</p>
+    </div>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-success">
+      ✅ {{ notification() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="category-layout">
+
+    <div class="form-card">
+      <h3>Add New Category</h3>
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Category Name *</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            placeholder="e.g. Consumer Electronics"
+            class="form-control"
+            [class.is-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched"
+          />
+          @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
+            <div class="error-feedback">Category name is required.</div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="3"
+            placeholder="Briefly describe the range of products in this category..."
+            class="form-control"
+            [class.is-invalid]="categoryForm.get('description')?.invalid && categoryForm.get('description')?.touched"
+          ></textarea>
+          @if (categoryForm.get('description')?.invalid && categoryForm.get('description')?.touched) {
+            <div class="error-feedback">Description is required.</div>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="categoryForm.invalid || isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span>Adding Category...</span>
+          } @else {
+            <span>Create Category</span>
+          }
+        </button>
+      </form>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>Existing Categories ({{ categories().length }})</h3>
+      </div>
+
+      @if (isLoading()) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading categories...</p>
+        </div>
+      } @else {
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of categories(); track cat._id) {
+              <tr>
+                <td class="name-cell">
+                  <strong>{{ cat.name }}</strong>
+                  <small>{{ cat._id }}</small>
+                </td>
+                <td class="desc-cell">{{ cat.description }}</td>
+                <td class="actions-cell">
+                  <button (click)="onDelete(cat._id, cat.name)" class="btn-action delete-action" title="Delete Category">
+                    🗑️ Delete
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="empty-table-cell">
+                  No categories created yet. Use the form to add one.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+</div>

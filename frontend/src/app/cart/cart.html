@@ -1,0 +1,119 @@
+<div class="cart-page">
+  <div class="cart-header">
+    <h1>Shopping Cart</h1>
+    <p>Review your selected items and proceed to checkout</p>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your shopping cart...</p>
+    </div>
+  } @else if (!cart() || cart()?.items?.length === 0) {
+    <div class="empty-cart-card">
+      <span class="empty-icon">🛒</span>
+      <h2>Your Cart is Empty</h2>
+      <p>Looks like you haven't added any products to your shopping cart yet.</p>
+      <a routerLink="/products" class="btn btn-primary">Start Shopping</a>
+    </div>
+  } @else {
+    <div class="cart-layout">
+
+      <div class="cart-items-section">
+        <div class="section-actions">
+          <span class="items-count">{{ cart()?.totalItems }} items in cart</span>
+          <button (click)="clearCart()" class="btn-clear-cart">Clear Cart</button>
+        </div>
+
+        <div class="items-table-wrapper">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of cart()?.items; track item.product._id) {
+                <tr>
+                  <td class="product-cell">
+                    <img
+                      [src]="getImageUrl(item.product.image)"
+                      [alt]="item.product.name"
+                      class="item-thumb"
+                    />
+                    <div class="item-info">
+                      <a [routerLink]="['/products', item.product._id]" class="item-name">
+                        {{ item.product.name }}
+                      </a>
+                      <span class="item-brand">{{ item.product.brand }}</span>
+                    </div>
+                  </td>
+                  <td class="price-cell">${{ item.price.toFixed(2) }}</td>
+                  <td class="qty-cell">
+                    <div class="qty-control">
+                      <button
+                        (click)="changeQuantity(item.product._id, item.quantity, -1)"
+                        class="btn-qty"
+                        [disabled]="item.quantity <= 1"
+                      >-</button>
+                      <span class="qty-num">{{ item.quantity }}</span>
+                      <button
+                        (click)="changeQuantity(item.product._id, item.quantity, 1)"
+                        class="btn-qty"
+                        [disabled]="item.quantity >= item.product.stock"
+                      >+</button>
+                    </div>
+                  </td>
+                  <td class="subtotal-cell">
+                    ${{ (item.price * item.quantity).toFixed(2) }}
+                  </td>
+                  <td class="action-cell">
+                    <button
+                      (click)="removeItem(item.product._id)"
+                      class="btn-remove"
+                      title="Remove item"
+                    >🗑️</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cart-summary-section">
+        <div class="summary-card">
+          <h3>Order Summary</h3>
+          <div class="summary-row">
+            <span>Items Subtotal:</span>
+            <span>${{ cart()?.totalPrice?.toFixed(2) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping:</span>
+            <span class="text-free">FREE</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total-row">
+            <span>Total:</span>
+            <span class="total-amount">${{ cart()?.totalPrice?.toFixed(2) }}</span>
+          </div>
+
+          <button (click)="proceedToCheckout()" class="btn btn-checkout">
+            Proceed to Checkout →
+          </button>
+          <a routerLink="/products" class="continue-shopping-link">or Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

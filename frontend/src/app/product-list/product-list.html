@@ -1,0 +1,98 @@
+<div class="catalog-page">
+  <div class="catalog-header">
+    <div class="header-text">
+      <h1>Explore Our Products</h1>
+      <p>Discover top-quality electronics, apparel, and home goods at unbeatable prices</p>
+    </div>
+
+    <div class="filters-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          placeholder="Search products by title, brand, or keywords..."
+          (input)="onSearch($event)"
+          class="search-input"
+        />
+      </div>
+
+      <div class="category-filter">
+        <select (change)="onCategorySelect($event)" class="category-select">
+          <option value="">All Categories</option>
+          @for (cat of categories(); track cat._id) {
+            <option [value]="cat._id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-success">
+      ✅ {{ notification() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading available products...</p>
+    </div>
+  } @else {
+
+    <div class="product-grid">
+      @for (product of products(); track product._id) {
+        <div class="product-card">
+          <div class="card-image-wrapper">
+            <img
+              [src]="getImageUrl(product.image)"
+              [alt]="product.name"
+              class="product-image"
+              loading="lazy"
+            />
+            <span class="brand-tag">{{ product.brand }}</span>
+          </div>
+
+          <div class="card-body">
+            <h3 class="product-title" [title]="product.name">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description }}</p>
+
+            <div class="price-stock-row">
+              <span class="product-price">${{ product.price.toFixed(2) }}</span>
+              @if (product.stock > 0) {
+                <span class="stock-badge in-stock">In Stock ({{ product.stock }})</span>
+              } @else {
+                <span class="stock-badge out-of-stock">Out of Stock</span>
+              }
+            </div>
+
+            <div class="card-actions">
+              <a [routerLink]="['/products', product._id]" class="btn btn-details">
+                View Details
+              </a>
+              <button
+                (click)="addToCart(product)"
+                class="btn btn-cart"
+                [disabled]="product.stock <= 0"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <span class="empty-icon">📦</span>
+          <h3>No Products Found</h3>
+          <p>Try adjusting your search criteria or selecting a different category.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

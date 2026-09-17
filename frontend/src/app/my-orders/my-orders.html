@@ -1,0 +1,65 @@
+<div class="orders-page">
+  <div class="orders-header">
+    <h1>My Order History</h1>
+    <p>Track your past purchases and check current shipping statuses</p>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+  } @else {
+
+    <div class="orders-container">
+      @for (order of orders(); track order._id) {
+        <div class="order-card">
+          <div class="order-card-header">
+            <div class="order-id-date">
+              <span class="order-id">Order #{{ order._id.slice(-8).toUpperCase() }}</span>
+              <span class="order-date">{{ order.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <div class="order-status-badge" [class]="getStatusClass(order.orderStatus)">
+              {{ order.orderStatus }}
+            </div>
+          </div>
+
+          <div class="order-card-body">
+            <div class="order-items-list">
+              @for (item of order.items; track $index) {
+                <div class="order-item-row">
+                  <span class="item-name">{{ item.name }}</span>
+                  <span class="item-qty-price">{{ item.quantity }} × ${{ item.price.toFixed(2) }}</span>
+                </div>
+              }
+            </div>
+
+            <div class="shipping-info">
+              <strong>Delivery Address:</strong>
+              <p>{{ order.shippingAddress.street }}, {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }}</p>
+              <p>Payment: <em>{{ order.paymentMethod }}</em> ({{ order.paymentStatus }})</p>
+            </div>
+          </div>
+
+          <div class="order-card-footer">
+            <span class="total-label">Total Amount Paid:</span>
+            <span class="order-total">${{ order.totalAmount.toFixed(2) }}</span>
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-orders-card">
+          <span class="empty-icon">📦</span>
+          <h2>No Orders Found</h2>
+          <p>You haven't placed any orders with us yet.</p>
+          <a routerLink="/products" class="btn btn-primary">Discover Products</a>
+        </div>
+      }
+    </div>
+  }
+</div>

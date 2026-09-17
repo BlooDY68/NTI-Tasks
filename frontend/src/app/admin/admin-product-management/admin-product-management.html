@@ -1,0 +1,85 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>Product Inventory Management</h1>
+      <p>Create, update, monitor stock, and delete store products</p>
+    </div>
+    <a routerLink="/admin/products/new" class="btn btn-primary">
+      ➕ Add New Product
+    </a>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-success">
+      ✅ {{ notification() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading inventory items...</p>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Brand</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (prod of products(); track prod._id) {
+            <tr>
+              <td class="img-cell">
+                <img [src]="getImageUrl(prod.image)" [alt]="prod.name" class="table-thumb" />
+              </td>
+              <td class="name-cell">
+                <strong>{{ prod.name }}</strong>
+                <small>{{ prod._id }}</small>
+              </td>
+              <td>{{ getCategoryName(prod.category) }}</td>
+              <td>{{ prod.brand }}</td>
+              <td class="price-cell">${{ prod.price.toFixed(2) }}</td>
+              <td>
+                @if (prod.stock > 10) {
+                  <span class="stock-badge stock-good">{{ prod.stock }} in stock</span>
+                } @else if (prod.stock > 0) {
+                  <span class="stock-badge stock-low">Low: {{ prod.stock }} left</span>
+                } @else {
+                  <span class="stock-badge stock-out">Out of Stock</span>
+                }
+              </td>
+              <td class="actions-cell">
+                <a [routerLink]="['/admin/products/edit', prod._id]" class="btn-action edit-action" title="Edit Product">
+                  ✏️ Edit
+                </a>
+                <button (click)="onDelete(prod._id, prod.name)" class="btn-action delete-action" title="Delete Product">
+                  🗑️ Delete
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-table-cell">
+                No products found in inventory. Click "Add New Product" to populate your catalog.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

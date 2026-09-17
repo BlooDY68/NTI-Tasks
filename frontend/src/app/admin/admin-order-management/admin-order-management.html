@@ -1,0 +1,83 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>Customer Orders Administration</h1>
+      <p>Inspect incoming orders, manage fulfillment statuses, and oversee transactions</p>
+    </div>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-success">
+      ✅ {{ notification() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading all system orders...</p>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order._id) {
+            <tr>
+              <td class="id-cell">
+                <strong>#{{ order._id.slice(-8).toUpperCase() }}</strong>
+              </td>
+              <td>{{ getUserDisplay(order.user) }}</td>
+              <td>{{ order.createdAt | date:'short' }}</td>
+              <td class="price-cell">${{ order.totalAmount.toFixed(2) }}</td>
+              <td>
+                <span class="payment-badge">{{ order.paymentMethod }}</span>
+              </td>
+              <td>
+                <select
+                  [value]="order.orderStatus"
+                  (change)="onStatusChange(order._id, $event)"
+                  class="status-select"
+                  [class]="'select-' + order.orderStatus.toLowerCase()"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </td>
+              <td class="actions-cell">
+                <button (click)="onDelete(order._id)" class="btn-action delete-action" title="Delete Order">
+                  🗑️ Delete
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-table-cell">
+                No orders have been submitted yet.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,184 @@
+<div class="checkout-page">
+  <div class="breadcrumb">
+    <a routerLink="/cart">← Back to Cart</a>
+  </div>
+
+  <div class="checkout-header">
+    <h1>Checkout & Order Placement</h1>
+    <p>Please enter your shipping address and choose a payment method</p>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Preparing checkout details...</p>
+    </div>
+  } @else {
+    <div class="checkout-layout">
+
+      <div class="form-column">
+        <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="checkout-form">
+          <div class="form-section">
+            <h3>1. Shipping Address</h3>
+
+            <div class="form-group">
+              <label for="street">Street Address *</label>
+              <input
+                type="text"
+                id="street"
+                formControlName="street"
+                placeholder="e.g. 123 Nile Corniche St, Apt 4B"
+                class="form-control"
+                [class.is-invalid]="checkoutForm.get('street')?.invalid && checkoutForm.get('street')?.touched"
+              />
+              @if (checkoutForm.get('street')?.invalid && checkoutForm.get('street')?.touched) {
+                <div class="error-feedback">Street address is required (minimum 3 characters).</div>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="city">City *</label>
+                <input
+                  type="text"
+                  id="city"
+                  formControlName="city"
+                  placeholder="e.g. Cairo"
+                  class="form-control"
+                  [class.is-invalid]="checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched"
+                />
+                @if (checkoutForm.get('city')?.invalid && checkoutForm.get('city')?.touched) {
+                  <div class="error-feedback">City is required.</div>
+                }
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="state">State / Governorate *</label>
+                <input
+                  type="text"
+                  id="state"
+                  formControlName="state"
+                  placeholder="e.g. Cairo Governorate"
+                  class="form-control"
+                  [class.is-invalid]="checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched"
+                />
+                @if (checkoutForm.get('state')?.invalid && checkoutForm.get('state')?.touched) {
+                  <div class="error-feedback">State is required.</div>
+                }
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="postalCode">Postal / ZIP Code *</label>
+                <input
+                  type="text"
+                  id="postalCode"
+                  formControlName="postalCode"
+                  placeholder="e.g. 11511"
+                  class="form-control"
+                  [class.is-invalid]="checkoutForm.get('postalCode')?.invalid && checkoutForm.get('postalCode')?.touched"
+                />
+                @if (checkoutForm.get('postalCode')?.invalid && checkoutForm.get('postalCode')?.touched) {
+                  <div class="error-feedback">Postal code is required.</div>
+                }
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="country">Country *</label>
+                <input
+                  type="text"
+                  id="country"
+                  formControlName="country"
+                  class="form-control"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>2. Payment Method</h3>
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" formControlName="paymentMethod" value="Cash on Delivery" />
+                <div class="option-text">
+                  <strong>💵 Cash on Delivery</strong>
+                  <p>Pay with cash directly to courier upon delivery</p>
+                </div>
+              </label>
+
+              <label class="payment-option">
+                <input type="radio" formControlName="paymentMethod" value="Credit Card" />
+                <div class="option-text">
+                  <strong>💳 Credit / Debit Card</strong>
+                  <p>Visa, MasterCard, or Meeza accepted</p>
+                </div>
+              </label>
+
+              <label class="payment-option">
+                <input type="radio" formControlName="paymentMethod" value="PayPal" />
+                <div class="option-text">
+                  <strong>🅿️ PayPal</strong>
+                  <p>Fast and secure checkout with PayPal</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-place-order"
+            [disabled]="isSubmitting()"
+          >
+            @if (isSubmitting()) {
+              <span>Placing Order...</span>
+            } @else {
+              <span>Confirm & Place Order (${{ cart()?.totalPrice?.toFixed(2) }})</span>
+            }
+          </button>
+        </form>
+      </div>
+
+      <div class="order-review-column">
+        <div class="review-card">
+          <h3>Your Order</h3>
+          <div class="review-items-list">
+            @for (item of cart()?.items; track item.product._id) {
+              <div class="review-item">
+                <div class="item-name-qty">
+                  <span class="item-name">{{ item.product.name }}</span>
+                  <span class="item-qty">Qty: {{ item.quantity }}</span>
+                </div>
+                <span class="item-subtotal">${{ (item.price * item.quantity).toFixed(2) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span>${{ cart()?.totalPrice?.toFixed(2) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Delivery:</span>
+            <span class="text-free">FREE</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row total-row">
+            <span>Grand Total:</span>
+            <span class="total-price">${{ cart()?.totalPrice?.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

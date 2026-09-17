@@ -1,0 +1,84 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div>
+      <h1>User Accounts & Access Control</h1>
+      <p>Inspect registered customer profiles and assign administrative privileges</p>
+    </div>
+  </div>
+
+  @if (notification()) {
+    <div class="alert alert-success">
+      ✅ {{ notification() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      ⚠️ {{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading registered accounts...</p>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Registered Date</th>
+            <th>Role</th>
+            <th>Privilege Action</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usr of users(); track usr._id) {
+            <tr>
+              <td class="user-cell">
+                <strong>{{ usr.name }}</strong>
+                <small>{{ usr._id }}</small>
+              </td>
+              <td>{{ usr.email }}</td>
+              <td>{{ usr.createdAt | date:'mediumDate' }}</td>
+              <td>
+                <span class="role-badge" [class.admin-role]="usr.role === 'Admin'">
+                  {{ usr.role }}
+                </span>
+              </td>
+              <td>
+                <button
+                  (click)="onRoleToggle(usr)"
+                  class="btn-action role-action"
+                  [disabled]="usr._id === currentAdminId"
+                >
+                  Switch to {{ usr.role === 'Admin' ? 'Customer' : 'Admin' }}
+                </button>
+              </td>
+              <td class="actions-cell">
+                <button
+                  (click)="onDelete(usr)"
+                  class="btn-action delete-action"
+                  [disabled]="usr._id === currentAdminId"
+                  title="Delete Account"
+                >
+                  🗑️ Delete
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-table-cell">
+                No users found.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
