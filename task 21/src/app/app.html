@@ -1,0 +1,71 @@
+<div class="container">
+  <header class="app-header">
+    <h1>🛒 Shopping Cart with Angular Signals</h1>
+    <p>Session 21 Task — State Management using <code>signal()</code>, <code>update()</code>, <code>set()</code>, <code>computed()</code> & <code>effect()</code></p>
+  </header>
+
+  <div class="layout-grid">
+    <section class="card products-section">
+      <div class="section-header">
+        <h2>Available Products</h2>
+        <span class="badge">{{ products.length }} items</span>
+      </div>
+
+      <div class="product-list">
+        @for (product of products; track product.id) {
+          <div class="product-item">
+            <div class="product-info">
+              <span class="product-name">{{ product.name }}</span>
+              <span class="product-price">${{ product.price }}</span>
+            </div>
+            <button class="btn btn-primary" (click)="addToCart(product)">
+              Add To Cart
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="card cart-section">
+      <div class="section-header">
+        <h2>Your Cart</h2>
+        <span class="badge badge-accent">{{ cart().length }} items</span>
+      </div>
+
+      <div class="cart-content">
+        @if (cart().length === 0) {
+          <div class="empty-state">
+            <span class="empty-icon">🛍️</span>
+            <p class="empty-text">Your cart is empty</p>
+            <p class="empty-subtext">Click "Add To Cart" on any product to get started.</p>
+          </div>
+        } @else {
+          <div class="cart-items-list">
+            @for (item of cart(); track $index) {
+              <div class="cart-item">
+                <div class="cart-item-info">
+                  <span class="item-name">{{ item.name }}</span>
+                  <span class="item-price">${{ item.price }}</span>
+                </div>
+                <button class="btn btn-danger" (click)="removeFromCart($index)">
+                  Remove
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="cart-footer">
+            <div class="total-row">
+              <span class="total-label">Total Price:</span>
+              <span class="total-amount">${{ totalPrice() }}</span>
+            </div>
+
+            <button class="btn btn-outline-danger btn-block" (click)="clearCart()">
+              Clear Cart
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</div>
